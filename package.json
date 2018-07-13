@@ -1,0 +1,11 @@
+{
+  "name": "@hughescr/serverless-plugin-git-version-json",
+  "version": "1.0.0",
+  "description": "A serverless plugin which will temporarily create a file git_version.json containing the output of `git describe --tags --dirty` and include it in the package",
+  "main": "index.js",
+  "author": "Craig R. Hughes <craig.git@rungie.com>",
+  "license": "BSD-3-Clause-Clear",
+  "publishConfig": {
+    "access": "public"
+  }
+}
