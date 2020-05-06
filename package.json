@@ -3,7 +3,14 @@
   "version": "1.0.0",
   "description": "A serverless plugin which will temporarily create a file git_version.json containing the output of `git describe --tags --dirty` and include it in the package",
   "main": "index.js",
-  "author": "Craig R. Hughes <craig.git@rungie.com>",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/hughescr/serverless-plugin-git-version-json.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postversion": "git commit -m \"Bump package version to $npm_package_version\" package.json yarn.lock; git flow release start $npm_package_version; git flow release finish -m $npm_package_version $npm_package_version; git merge develop; git checkout develop"
+  },  "author": "Craig R. Hughes <craig.git@rungie.com>",
   "license": "BSD-3-Clause-Clear",
   "publishConfig": {
     "access": "public"
