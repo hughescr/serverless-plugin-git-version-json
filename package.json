@@ -15,5 +15,9 @@
   "license": "BSD-3-Clause-Clear",
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "@hughescr/eslint-config-default": "^2.5.0",
+    "eslint": "^7.6.0"
   }
 }
