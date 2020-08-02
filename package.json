@@ -8,7 +8,7 @@
     "url": "git://github.com/hughescr/serverless-plugin-git-version-json.git"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "eslint .",
     "postversion": "git commit -m \"Bump package version to $npm_package_version\" package.json yarn.lock; git flow release start $npm_package_version; git flow release finish -m $npm_package_version $npm_package_version; git merge develop; git checkout develop"
   },
   "author": "Craig R. Hughes <craig.git@rungie.com>",
