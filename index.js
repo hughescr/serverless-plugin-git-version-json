@@ -3,8 +3,30 @@
 const fs = require('fs');
 const path = require('path');
 const spawnSync = require('child_process').spawnSync;
+const moment = require('moment-timezone');
 
 class GitVersionOnDeploy {
+  get options() {
+    const options = Object.assign(
+      {
+        deployTimeZone: 'utc'
+      }, this.serverless.service.custom ||
+      {}
+    );
+
+    const time_zone = moment.tz.zone(options.deployTimeZone);
+    if(time_zone === null) {
+      this.serverless.cli.log(
+        'WARNING: Bad time zone, falling back to UTC. You must use IANA timezone names.'
+      );
+      options.deployTimeZone = 'utc';
+    } else {
+      this.serverless.cli.log(`Using time zone: ${options.deployTimeZone}`);
+    }
+
+    return options;
+  }
+
   constructor(serverless) {
     this.serverless = serverless;
     this.path = serverless.config.servicePath;
@@ -17,11 +39,11 @@ class GitVersionOnDeploy {
     this.filePath = path.join(this.path, this.versionJSON);
 
     this.hooks = {
-      'offline:start:init':                      this.writeVersionFile.bind(this),
-      'before:deploy:function:deploy':           this.writeVersionFile.bind(this),
-      'after:deploy:function:deploy':            this.deleteVersionFile.bind(this),
+      'offline:start:init': this.writeVersionFile.bind(this),
+      'before:deploy:function:deploy': this.writeVersionFile.bind(this),
+      'after:deploy:function:deploy': this.deleteVersionFile.bind(this),
       'before:deploy:createDeploymentArtifacts': this.writeVersionFile.bind(this),
-      'after:deploy:createDeploymentArtifacts':  this.deleteVersionFile.bind(this),
+      'after:deploy:createDeploymentArtifacts': this.deleteVersionFile.bind(this),
     };
   }
 
@@ -34,10 +56,14 @@ class GitVersionOnDeploy {
       return;
     }
     const git_id = gitResults.stdout.trim();
-    versionFileContents = `{ "gitVersion": "${git_id}" }`;
+
+    const deploy_time = moment().tz(this.options.deployTimeZone).format('YYYY-MM-DDTHH:mm:ss.SSSZZ');
+
+    versionFileContents = `{ "gitVersion": "${git_id}", "deployTime": "${deploy_time}"}`;
 
     fs.writeFileSync(this.filePath, versionFileContents);
     this.serverless.cli.log(`Tagged with git version ${git_id}`);
+    this.serverless.cli.log(`Deploy time ${deploy_time}`);
   }
 
   deleteVersionFile() {
