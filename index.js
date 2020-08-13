@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const spawnSync = require('child_process').spawnSync;
+const { DateTime } = require("luxon");
 
 class GitVersionOnDeploy {
   constructor(serverless) {
@@ -34,7 +35,8 @@ class GitVersionOnDeploy {
         return;
     }
     const git_id = gitResults.stdout.trim();
-    versionFileContents = `{ "gitVersion": "${git_id}" }`;
+    const deploy_time = DateTime.local().setZone('America/Los_Angeles').toISO();
+    versionFileContents = `{ "gitVersion": "${git_id}", "deployTime": "${deploy_time}"}`;
 
     fs.writeFileSync(this.filePath, versionFileContents);
     this.serverless.cli.log(`Tagged with git version ${git_id}`);
