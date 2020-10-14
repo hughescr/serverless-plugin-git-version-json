@@ -9,7 +9,8 @@ class GitVersionOnDeploy {
   get options() {
     const options = Object.assign(
       {
-        deployTimeZone: 'utc'
+        deployTimeZone: 'utc',
+        versionJSONFile: 'git_version.json'
       }, this.serverless.service.custom ||
       {}
     );
@@ -20,8 +21,6 @@ class GitVersionOnDeploy {
         'WARNING: Bad time zone, falling back to UTC. You must use IANA timezone names.'
       );
       options.deployTimeZone = 'utc';
-    } else {
-      this.serverless.cli.log(`Using time zone: ${options.deployTimeZone}`);
     }
 
     return options;
@@ -30,13 +29,7 @@ class GitVersionOnDeploy {
   constructor(serverless) {
     this.serverless = serverless;
     this.path = serverless.config.servicePath;
-    const custom = serverless.service.custom || {};
-    this.versionJSON = custom.versionJSONFile;
-    if(!this.versionJSON) {
-      this.serverless.cli.log('Path for git_version.json not specified.  Using "git_version.json".');
-      this.versionJSON = 'git_version.json';
-    }
-    this.filePath = path.join(this.path, this.versionJSON);
+    this.filePath = path.join(this.path, this.options.versionJSONFile);
 
     this.hooks = {
       'offline:start:init': this.writeVersionFile.bind(this),
@@ -48,7 +41,7 @@ class GitVersionOnDeploy {
   }
 
   writeVersionFile() {
-    let versionFileContents = '{ "gitVersion": "';
+    let versionFileContents = '{ "gitVersion": "}';
     const gitResults = spawnSync('git', ['describe', '--tags', '--dirty'], { cwd: this.path, encoding: 'utf8' });
     if(gitResults.status != 0) {
       this.serverless.cli.log('Error while running "git describe --tags --dirty":');
@@ -56,6 +49,9 @@ class GitVersionOnDeploy {
       return;
     }
     const git_id = gitResults.stdout.trim();
+
+    this.serverless.cli.log(`Writing out to: ${this.options.versionJSONFile}`);
+    this.serverless.cli.log(`Using time zone: ${this.options.deployTimeZone}`);
 
     const deploy_time = moment().tz(this.options.deployTimeZone).format('YYYY-MM-DDTHH:mm:ss.SSSZZ');
 
@@ -68,7 +64,7 @@ class GitVersionOnDeploy {
 
   deleteVersionFile() {
     fs.unlinkSync(this.filePath);
-    this.serverless.cli.log(`Deleted ${this.versionJSON}`);
+    this.serverless.cli.log(`Deleted ${this.options.versionJSONFile}`);
   }
 }
 
