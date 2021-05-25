@@ -11,8 +11,8 @@ class GitVersionOnDeploy {
     const custom = serverless.service.custom || {};
     this.versionJSON = custom.versionJSONFile;
     if(!this.versionJSON) {
-        this.serverless.cli.log('Path for git_version.json not specified.  Using "git_version.json".');
-        this.versionJSON = 'git_version.json';
+      this.serverless.cli.log('Path for git_version.json not specified.  Using "git_version.json".');
+      this.versionJSON = 'git_version.json';
     }
     this.filePath = path.join(this.path, this.versionJSON);
 
@@ -29,9 +29,9 @@ class GitVersionOnDeploy {
     let versionFileContents = '{ "gitVersion": "';
     const gitResults = spawnSync('git', ['describe', '--tags', '--dirty'], { cwd: this.path, encoding: 'utf8' });
     if(gitResults.status != 0) {
-        this.serverless.cli.log('Error while running "git describe --tags --dirty":');
-        this.serverless.cli.log(gitResults.stderr);
-        return;
+      this.serverless.cli.log('Error while running "git describe --tags --dirty":');
+      this.serverless.cli.log(gitResults.stderr);
+      return;
     }
     const git_id = gitResults.stdout.trim();
     versionFileContents = `{ "gitVersion": "${git_id}" }`;
