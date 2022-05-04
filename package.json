@@ -1,6 +1,6 @@
 {
   "name": "@hughescr/serverless-plugin-git-version-json",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "A serverless plugin which will temporarily create a file git_version.json containing the output of `git describe --tags --dirty` and include it in the package",
   "main": "index.js",
   "repository": {
@@ -18,6 +18,9 @@
   },
   "devDependencies": {
     "@hughescr/eslint-config-default": "^2.8.7",
-    "eslint": "^7.27.0"
+    "eslint": "^8.14.0"
+  },
+  "dependencies": {
+    "path": "^0.12.7"
   }
 }

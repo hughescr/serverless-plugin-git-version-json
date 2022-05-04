@@ -17,11 +17,11 @@ class GitVersionOnDeploy {
     this.filePath = path.join(this.path, this.versionJSON);
 
     this.hooks = {
-      'offline:start:init':                      this.writeVersionFile.bind(this),
-      'before:deploy:function:deploy':           this.writeVersionFile.bind(this),
-      'after:deploy:function:deploy':            this.deleteVersionFile.bind(this),
-      'before:deploy:createDeploymentArtifacts': this.writeVersionFile.bind(this),
-      'after:deploy:createDeploymentArtifacts':  this.deleteVersionFile.bind(this),
+      'offline:start:init':                       this.writeVersionFile.bind(this),
+      'before:deploy:function:packageFunction':   this.writeVersionFile.bind(this),
+      'after:deploy:function:packageFunction':    this.deleteVersionFile.bind(this),
+      'before:package:createDeploymentArtifacts': this.writeVersionFile.bind(this),
+      'after:package:createDeploymentArtifacts':  this.deleteVersionFile.bind(this),
     };
   }
 
