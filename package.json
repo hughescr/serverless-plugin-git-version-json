@@ -18,6 +18,9 @@
   },
   "devDependencies": {
     "@hughescr/eslint-config-default": "^2.8.7",
-    "eslint": "^7.27.0"
+    "eslint": "^8.14.0"
+  },
+  "dependencies": {
+    "path": "^0.12.7"
   }
 }
